@@ -1,0 +1,13 @@
+{
+  "name": "creator-follow-up-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/creator_follow_up.ts",
+    "test": "node --import tsx --test src/creator_follow_up.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {"zod": "^3.24.2"},
+  "devDependencies": {"@types/node": "^22.14.0", "tsx": "^4.19.3", "typescript": "^5.8.3"}
+}

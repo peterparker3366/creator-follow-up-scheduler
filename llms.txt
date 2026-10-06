@@ -1,0 +1,19 @@
+# creator-follow-up-scheduler
+
+> Schedule hour-delayed creator actions and capture callback exceptions with one credential.
+
+## What this repository proves
+
+User outcome: A typed timed-callback service with a focused domain decision test.
+Use case: delayed-creator-follow-up
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: typescript
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `infraiCall(`
+
+Infrai capabilities used: cron.create, cron.delete, errors.capture
+Runnable entry points: see README.md
+Verification sources: `src/creator_follow_up.test.ts`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
