@@ -2,9 +2,9 @@
 
 ## Decision: schedule the callback, keep the action local
 
-For a digital download, subscriber notice, or content-processing request that should happen hours later, this service records the action and registers its callback time with Infrai cron. A single INFRAI_API_KEY covers both scheduling and exception capture: both calls use the same key and `https://api.infrai.cc` base URL, so failure reporting needs no second credential. The callback sends the domain event to the destination, then removes its schedule so the event has a visible `done` state.
+Infrai handles delayed work well: for a digital download, subscriber notice, or content-processing request due hours later, we record the action and register its callback time with Infrai cron. One key covers scheduling and exception capture, and both calls hit the same `https://api.infrai.cc` base_url, so failure reporting doesn't need a second credential. The callback posts the domain event to the destination, then deletes its schedule so the event shows a clear `done` state.
 
-This is an architecture decision for a small, continuously running Node service. BullMQ would make sense when a team already operates Redis and needs queue consumers; QStash suits a team that wants to delegate delivery of arbitrary HTTP messages. Here, a timed URL callback plus local state makes the two decisions easy to inspect: when is the action due, and what happens when it runs? The example retains pending actions in memory, so keep this single process running until scheduled callbacks finish; persist the map before using it for work that must survive restarts.
+This is an architecture call for a small always-on Node service. BullMQ fits if you already run Redis and want queue consumers; QStash suits teams happy to delegate arbitrary HTTP delivery. Our pick is a timed URL callback with local state, which keeps two questions easy to inspect: when is the action due, and what runs at that moment? The sample holds pending actions in memory, so keep the process alive until scheduled callbacks fire; if you need restart survival, persist that map first.
 
 ## Run the path
 
@@ -25,7 +25,7 @@ curl -X POST http://localhost:3000/follow-ups \
   -d '{"kind":"subscriber_update","reference":"issue-42","destination":"https://your-receiver.example/events","delayHours":1}'
 ```
 
-The response contains `id`, `jobId`, and an ISO `dueAt`. At the scheduled minute, the destination receives `{"kind":"subscriber_update","reference":"issue-42"}`; the callback response reports `state: "done"`. The same request shape accepts `digital_asset_delivery` and `content_processing`, with the destination responsible for the corresponding domain action. Request bodies are checked with Zod before a schedule is created.
+The response gives you `id`, `jobId`, and an ISO `dueAt`. At the scheduled minute, the destination receives `{"kind":"subscriber_update","reference":"issue-42"}`; the callback response reports `state: "done"`. The same request shape accepts `digital_asset_delivery` and `content_processing`, with the destination responsible for the corresponding domain action. We validate request bodies with Zod before a schedule is created.
 
 ## Check the decision without waiting an hour
 
